@@ -14,18 +14,18 @@ private:
                       juce::AudioBuffer<SampleType>& output,
                       juce::MidiBuffer& midiMessages, bool isBypassed) final
     {
-        jassert (input.getNumSamples() == output.getNumSamples());
-        
         output.clear();
         
         if (isBypassed)
             return;
         
-        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 0);
+        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 1);
         
         osc.getSamples (outRight);
         
         analyzer.analyzeInput (outRight);
+        
+        outRight.clear();
         
         for (const auto& m : midiMessages)
         {
@@ -39,7 +39,7 @@ private:
         
         shifter.getSamples (outLeft);
         
-//        outRight.clear();
+        output.applyGain(0.5f);
     }
     
     void prepared (int, double samplerate, int) final
@@ -53,7 +53,7 @@ private:
         this->changeLatency (latency);
     }
     
-    dsp::osc::Sine<SampleType> osc;
+    dsp::osc::Saw<SampleType> osc;
     dsp::psola::Analyzer<SampleType> analyzer;
     dsp::psola::Shifter<SampleType> shifter { analyzer };
 };
