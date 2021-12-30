@@ -19,13 +19,13 @@ private:
         if (isBypassed)
             return;
         
-        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 1);
+//        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 1);
+//
+//        osc.getSamples (outRight);
         
-        osc.getSamples (outRight);
+        analyzer.analyzeInput (input);
         
-        analyzer.analyzeInput (outRight);
-        
-        outRight.clear();
+//        outRight.clear();
         
         for (const auto& m : midiMessages)
         {
