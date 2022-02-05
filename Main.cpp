@@ -19,27 +19,27 @@ private:
         if (isBypassed)
             return;
         
-//        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 1);
-//
-//        osc.getSamples (outRight);
+        auto outRight = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 1);
+
+        osc.getSamples (outRight);
         
-        analyzer.analyzeInput (input);
+        analyzer.analyzeInput (outRight);
         
-//        outRight.clear();
+        outRight.clear();
         
         for (const auto& m : midiMessages)
         {
             const auto message = m.getMessage();
 
             if (message.isNoteOn())
-                shifter.setPitch (math::midiToFreq (message.getNoteNumber()));
+                shifter.setPitchHz (math::midiToFreq (message.getNoteNumber()));
         }
         
         auto outLeft = dsp::buffers::getAliasBuffer (output, 0, output.getNumSamples(), 1, 0);
-        
+
         shifter.getSamples (outLeft);
-        
-        output.applyGain(0.5f);
+
+        output.applyGain (0.5f);
     }
     
     void prepared (int, double samplerate, int) final
@@ -48,12 +48,12 @@ private:
         
         const auto latency = analyzer.setSamplerate (samplerate);
         
-        shifter.setPitch (440);
+        shifter.setPitchHz (440);
         
         this->changeLatency (latency);
     }
     
-    dsp::osc::Saw<SampleType> osc;
+    dsp::osc::Triangle<SampleType> osc;
     dsp::psola::Analyzer<SampleType> analyzer;
     dsp::psola::Shifter<SampleType> shifter { analyzer };
 };

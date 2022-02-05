@@ -2,18 +2,10 @@ cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
 
 project (PsolaTest VERSION 0.0.1 LANGUAGES CXX)
 
-include (LemonsGetCPM.cmake)
-
-CPMAddPackage (
-        NAME Lemons
-        GITHUB_REPOSITORY benthevining/Lemons
-        GIT_TAG origin/main)
-
-list (APPEND CMAKE_MODULE_PATH ${LEMONS_CMAKE_MODULE_PATH})
+include (AddLemons.cmake)
 
 include (BVBrandFlags)
 include (LemonsPluginModules)
-include (LemonsTestingModules)
 
 juce_add_plugin (${PROJECT_NAME}
     ${BV_DEFAULT_BRAND_FLAGS}
@@ -36,4 +28,4 @@ lemons_configure_juce_plugin (TARGET ${PROJECT_NAME} MICROPHONE)
 
 target_sources (${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
 
-target_link_libraries (${PROJECT_NAME} PRIVATE lemons_psola lemons_plugin lemons_unit_testing)
+target_link_libraries (${PROJECT_NAME} PRIVATE lemons_psola LemonsPluginModules)
